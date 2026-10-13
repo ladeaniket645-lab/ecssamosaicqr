@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hail Mary — Mission Control</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--o:#ff9a2e;--t:#2fd3c0;--bg:#050810}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--bg);color:#e8f1ff;font-family:"Segoe UI",system-ui,sans-serif;overflow-x:hidden;position:relative}
+.nebula{position:fixed;inset:0;z-index:0;background:
+radial-gradient(ellipse 40% 45% at 28% 72%,rgba(255,150,40,.75),rgba(255,90,10,.25) 45%,transparent 70%),
+radial-gradient(ellipse 45% 40% at 68% 82%,rgba(47,211,192,.55),transparent 70%),
+radial-gradient(ellipse 60% 60% at 80% 20%,rgba(40,70,140,.35),transparent 70%),#050810}
+.planet{position:fixed;border-radius:50%;z-index:0;box-shadow:inset -14px -10px 30px rgba(0,0,0,.7)}
+.p1{right:4%;top:22%;width:min(18vw,200px);aspect-ratio:1;background:linear-gradient(160deg,transparent 30%,rgba(255,190,60,.55) 38%,transparent 48%),radial-gradient(circle at 30% 30%,#3fa7a0,#14504f 60%,#08201f)}
+.p2{right:30%;top:58%;width:min(8vw,90px);aspect-ratio:1;background:radial-gradient(circle at 35% 30%,#d9922e,#5a3414 70%)}
+.p3{left:46%;top:36%;width:min(6vw,64px);aspect-ratio:1;background:radial-gradient(circle at 35% 30%,#c9892f,#3b2410 70%)}
+.stars{position:fixed;inset:0;z-index:0}
+.stars i{position:absolute;border-radius:50%;background:#fff;animation:tw 3s infinite alternate}
+@keyframes tw{to{opacity:.2}}
+main{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:28px 18px 90px;text-align:center}
+.tag{letter-spacing:.35em;font-size:.75rem;color:var(--t)}
+h1{margin:.3em 0 .1em;font-size:clamp(1.8rem,5vw,3.4rem);letter-spacing:.06em;text-shadow:0 0 24px rgba(255,150,40,.6)}
+.sub{opacity:.8;margin:0 0 28px}
+.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(8px,2vw,22px);margin:10px auto 18px}
+.slot{aspect-ratio:3/4;border-radius:18px;background:rgba(10,18,40,.55);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.18);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:.5s}
+.slot small{letter-spacing:.25em;font-size:clamp(.55rem,1.4vw,.8rem);opacity:.7}
+.slot b{font-size:clamp(2.8rem,12vw,8rem);line-height:1.1;opacity:.35;font-weight:700}
+.slot.on{border-color:var(--o);box-shadow:0 0 40px rgba(255,154,46,.7),inset 0 0 30px rgba(255,154,46,.25);transform:scale(1.04)}
+.slot.on b{opacity:1;color:#ffd59a;text-shadow:0 0 22px var(--o);animation:pop .6s}
+@keyframes pop{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.25)}100%{transform:scale(1)}}
+#cnt{letter-spacing:.2em;color:var(--t)}
+.card{max-width:520px;margin:30px auto;padding:24px;border-radius:20px;background:rgba(10,18,40,.65);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);text-align:left}
+.card h2{margin:.2em 0}
+input{width:100%;padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.4);color:#fff;font-size:1.1rem;margin:14px 0}
+button{background:linear-gradient(135deg,var(--o),#ff6a1a);color:#1a0d00;border:0;border-radius:12px;padding:13px 20px;font-weight:700;font-size:1rem;cursor:pointer}
+button.g{background:rgba(255,255,255,.12);color:#e8f1ff;padding:8px 12px;font-size:.8rem;font-weight:500;margin:3px}
+.big{text-align:center;padding:10px 0}
+.big b{font-size:5rem;color:#ffd59a;text-shadow:0 0 22px var(--o);display:block}
+.shake{animation:sh .4s}@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+#msg{min-height:1.4em;color:#ff8a8a}
+#ov{position:fixed;inset:0;z-index:5;background:rgba(3,6,14,.88);display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px}
+#ov.show{display:flex}
+#ov h2{font-size:clamp(2rem,7vw,4.5rem);color:var(--t);text-shadow:0 0 30px var(--t);margin:.2em}
+#ov .code{font-size:clamp(3rem,14vw,9rem);letter-spacing:.2em;color:#ffd59a;text-shadow:0 0 30px var(--o)}
+#ov p{font-size:clamp(1rem,3vw,1.6rem)}
+#ops{position:fixed;bottom:0;left:0;right:0;z-index:6;padding:8px;text-align:center;background:rgba(0,0,0,.5);font-size:.8rem}
+#ops details{display:inline-block;text-align:left;max-width:100%}
+#ops summary{cursor:pointer;opacity:.7}
+#ops code{background:rgba(255,255,255,.1);padding:2px 6px;border-radius:6px}
+@media(max-width:600px){.slots{grid-template-columns:repeat(2,1fr)}}
+</style></head>
+<body>
+<div class="nebula"></div><div class="stars" id="stars"></div>
+<div class="planet p1"></div><div class="planet p2"></div><div class="planet p3"></div>
+<main id="app"></main>
+<div id="ov"><p class="tag">SIGNAL COMPLETE</p><h2>ACCESS GRANTED</h2><div class="code" id="code"></div><p>Next stage unlocked. Rocky says: <b>“Fist my bump!”</b> 👊</p><button class="g" onclick="document.getElementById('ov').classList.remove('show')">Close</button></div>
+<div id="ops"></div>
+<script>
+// ---- CONFIG: placeholder puzzles. Replace with your real ones later. p = slot position (1-4), d = digit revealed ----
+const GAMES=[
+{id:1,t:"Astrophage Growth",q:"Astrophage doubles every hour. You start with 1 unit. How many units after 3 hours?",a:["8","eight"],d:4,p:1},
+{id:2,t:"Rocky's Anatomy",q:"How many legs does Rocky, the Eridian, have?",a:["5","five"],d:2,p:2},
+{id:3,t:"The Dimming Star",q:"Astrophage is dimming which star? (Hint: our own)",a:["sun","the sun"],d:7,p:3},
+{id:4,t:"Signal Sequence",q:"Decode Rocky's pattern: 2, 4, 8, 16, ?",a:["32"],d:9,p:4}];
+const $=s=>document.querySelector(s);
+const mode=/^#g[1-4]$/.test(location.hash)?"play":"display";
+let found={},db=null,ac=null,ready=false,unlocked=false,bc=null;
+try{bc=new BroadcastChannel("hm")}catch(e){}
+// stars
+for(let i=0;i<110;i++){const s=document.createElement("i"),z=Math.random()*2+1;s.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*100}%;width:${z}px;height:${z}px;animation-delay:${Math.random()*3}s`;$("#stars").appendChild(s)}
+// ---- audio ----
+function tone(f,t,d,g=.12){if(!ac)return;const o=ac.createOscillator(),v=ac.createGain();o.frequency.value=f;v.gain.setValueAtTime(g,ac.currentTime+t);v.gain.exponentialRampToValueAtTime(.001,ac.currentTime+t+d);o.connect(v).connect(ac.destination);o.start(ac.currentTime+t);o.stop(ac.currentTime+t+d)}
+const chime=()=>[660,880,1320].forEach((f,i)=>tone(f,i*.09,.25));
+function say(p,r){const u=new SpeechSynthesisUtterance("Fist my bump!");u.pitch=p;u.rate=r;speechSynthesis.speak(u)}
+function rocky(){[392,523,659,784,659,880].forEach((f,i)=>tone(f,i*.11,.2,.15));if(!window.speechSynthesis)return;setTimeout(()=>{speechSynthesis.cancel();say(2,1.1);say(1.5,.85)},700)}
+function enableSound(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();ac.resume();ready=true;chime();$("#snd")&&($("#snd").textContent="🔊 Sound on")}catch(e){}}
+// ---- state ----
+const load=()=>{try{found=JSON.parse(localStorage.hm||"{}")}catch(e){found={}}};
+async function save(p,d){if(db)await db.doc("digits/p"+p).set({d:String(d),t:Date.now()});else{found[p]=String(d);try{localStorage.hm=JSON.stringify(found)}catch(e){}bc&&bc.postMessage(1)}render()}
+async function reset(){if(db){for(const p of Object.keys(found))await db.doc("digits/p"+p).delete()}else{found={};try{localStorage.hm="{}"}catch(e){}bc&&bc.postMessage(1)}render()}
+async function init(){
+ if(mode=="display")view();else playView();
+ try{db=window.claude?await window.claude.use("db"):null}catch(e){db=null}
+ if(db)db.collection("digits").onSnapshot(s=>{found={};s.docs.forEach(x=>{const d=x.data();if(d)found[x.id.slice(1)]=d.d});render()},()=>{});
+ else{load();bc&&(bc.onmessage=()=>{load();render()});render()}
+}
+// ---- display (big screen) ----
+function view(){
+ $("#app").innerHTML=`<p class="tag">PROJECT HAIL MARY · MISSION CONTROL</p><h1>RECOVER THE LAUNCH CODE</h1><p class="sub">Scan a QR · solve the puzzle · lock in your digit</p>
+ <div class="slots">${[1,2,3,4].map(p=>`<div class="slot" id="s${p}"><small>POSITION ${p}</small><b>?</b></div>`).join("")}</div><div id="cnt"></div>`;
+ const base=location.href.split("#")[0];
+ $("#ops").innerHTML=`<details><summary>Operator panel</summary><button class="g" id="snd" onclick="enableSound()">🔈 Enable sound (click once)</button><button class="g" onclick="rocky()">Test Rocky</button><button class="g" onclick="if(confirm('Reset all digits?'))reset()">Reset game</button>
+ ${GAMES.map(g=>`<button class="g" onclick="save(${g.p},${g.d})">Simulate game ${g.id}</button>`).join("")}<div>Puzzle links for QR codes: ${GAMES.map(g=>`<div>Game ${g.id}: <code>${base}#g${g.id}</code></div>`).join("")}</div></details>`;
+}
+function render(){
+ if(mode!="display"){playRefresh();return}
+ let n=0;for(let p=1;p<=4;p++){const e=$("#s"+p),v=found[p],was=e.classList.contains("on");if(v!=null)n++;e.classList.toggle("on",v!=null);e.querySelector("b").textContent=v??"?";if(v!=null&&!was&&ready)chime()}
+ $("#cnt").textContent=n+" / 4 SIGNALS LOCKED";
+ if(n==4&&!unlocked){unlocked=true;$("#code").textContent=[1,2,3,4].map(p=>found[p]).join("");$("#ov").classList.add("show");if(ready)rocky()}
+ if(n<4){unlocked=false;$("#ov").classList.remove("show")}
+}
+// ---- player (phone after scanning QR) ----
+function playView(){
+ const g=GAMES[+location.hash.slice(2)-1];
+ $("#app").innerHTML=`<p class="tag">PROJECT HAIL MARY · PUZZLE ${g.id}/4</p><div class="card" id="pc"><h2>${g.t}</h2><p>${g.q}</p><input id="ans" placeholder="Your answer" autocomplete="off"><div id="msg"></div><button onclick="check()">TRANSMIT</button></div>`;
+ $("#ans").addEventListener("keydown",e=>e.key=="Enter"&&check());
+}
+function playRefresh(){const g=GAMES[+location.hash.slice(2)-1];if(g&&found[g.p]!=null)reveal(g)}
+function reveal(g){$("#pc").innerHTML=`<div class="big"><p class="tag">SIGNAL LOCKED ✓</p><b>${g.d}</b><p>This is digit for <strong>POSITION ${g.p}</strong>.<br>It's now showing on Mission Control. Head to the screen! 👊</p></div>`}
+async function check(){
+ const g=GAMES[+location.hash.slice(2)-1],v=$("#ans").value.trim().toLowerCase();
+ if(g.a.includes(v)){await save(g.p,g.d);reveal(g)}
+ else{$("#msg").textContent="Wrong signal. Try again, Grace.";const c=$("#pc");c.classList.remove("shake");void c.offsetWidth;c.classList.add("shake")}
+}
+window.addEventListener("hashchange",()=>location.reload());
+init();
+</script></body></html>
